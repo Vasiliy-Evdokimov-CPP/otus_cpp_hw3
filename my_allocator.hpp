@@ -85,7 +85,7 @@ public:
         return pool->allocate(n);
     }
 
-    void deallocate (T* p, std::size_t n)
+    void deallocate ([[maybe_unused]] T* p, [[maybe_unused]] std::size_t n)
     {
         //  { ToDo }
     }
