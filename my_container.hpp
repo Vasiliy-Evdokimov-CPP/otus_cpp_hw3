@@ -1,5 +1,4 @@
-#include <iostream>
-#include <memory>
+#pragma once
 
 static int c_count = 0;
 
