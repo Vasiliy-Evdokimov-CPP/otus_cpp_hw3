@@ -1,51 +1,60 @@
 #include <iostream>
 #include <memory>
 
-template <class T, class Alloc = std::allocator<T>>
-class my_container {
-public:
-    my_container() : m_data(nullptr), m_size(0) {}
+static int c_count = 0;
 
-    ~my_container() {
-        clear();
+template <class T, class Allocator = std::allocator<T>>
+class my_container {
+public:    
+    my_container()
+    {
+        c_count++;
+        m_id = c_count;        
+        std::cout << "my_container(" << m_id << ")" << std::endl;        
+        m_data = nullptr;
+        m_size = 0;
     }
 
-    void add(const T& value) {
-        if (m_data == nullptr) 
+    ~my_container() 
+    {
+        std::cout << "~my_container(" << m_id << ")" << std::endl;        
+        if (m_data != nullptr) 
         {
-            m_data = m_allocator.allocate(1);
-        } else 
-        {
-            T* newData = m_allocator.allocate(m_size + 1);
-            for (size_t i = 0; i < m_size; ++i) {
-                m_allocator.construct(newData + i, std::move(m_data[i]));
-                m_allocator.destroy(m_data + i);
-            }
-            m_allocator.deallocate(m_data, m_size);
-            m_data = newData;
+            for (size_t i = 0; i < m_size; ++i)
+                (m_data + i)->~T();
         }
+    }
 
-        m_allocator.construct(m_data + m_size, value);
+    void add(const T value) 
+    {
+        T* new_data = m_allocator.allocate(1);
+        //
+        if (new_data == nullptr) 
+        {
+            std::cout << "allocation failed!" << std::endl;
+            return;
+        }
+        //
+        if (!m_size)
+            m_data = new_data;
+        //        
+        *(m_data + m_size) = value;
         m_size++;
     }
 
-    void iterate() {
+    void iterate() 
+    {
         for (size_t i = 0; i < m_size; ++i)
-            std::cout << i << " " << m_data[i] << std::endl;
+            std::cout << i << " " << *((T*)(m_data + i)) << std::endl;
     }
 
-    void clear() {
-        if (m_data != nullptr) {
-            for (size_t i = 0; i < m_size; ++i)
-                m_allocator.destroy(m_data + i);
-            m_allocator.deallocate(m_data, m_size);
-            m_data = nullptr;
-            m_size = 0;
-        }
+    std::size_t size() {
+        return m_size;
     }
 
-private:
+private:    
+    int m_id;
     T* m_data;
     size_t m_size;
-    Alloc m_allocator;
+    Allocator m_allocator;
 };

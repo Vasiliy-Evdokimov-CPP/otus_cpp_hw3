@@ -15,6 +15,7 @@ int factorial(int n)
 
 int main()
 {
+
     std::cout << "default allocated map:" << std::endl;
     std::map<int, int> map_default;
 	for (int i = 0; i < ITEMS_AMOUNT; ++i) 
@@ -31,15 +32,16 @@ int main()
         std::cout << i << " " << map_custom[i] << std::endl;
     }
     //
+    std::cout << "default allocated container:" << std::endl;
 	my_container<int> container_default;
 	for (int i = 0; i < ITEMS_AMOUNT; ++i)
-		container_default.add(i);
-    std::cout << "default allocated container:" << std::endl;
+		container_default.add(i);    
     container_default.iterate();
     //
+    std::cout << "custom allocated container:" << std::endl;
     my_container<int, my_allocator<int, ITEMS_AMOUNT>> container_custom;
 	for (int i = 0; i < ITEMS_AMOUNT; ++i)
-	    container_custom.add(i);
-    std::cout << "custom allocated container:" << std::endl;
+	    container_custom.add(i);    
     container_custom.iterate();
+
 }
